@@ -35,7 +35,7 @@ int Move::apply(void)
 
 void Move::unapply(void)
 {
-    board_->make_move(0, r_, c_);
+    board_->pull_up_edge(r_, c_);
 }
 
 Move Move::invalid(void)
@@ -48,6 +48,13 @@ Move Move::invalid(void)
  */
 Board::Board()
 {}
+
+int Board::set_owner(int player, int r, int c)
+{
+    int old = raw_[r][c];
+    raw_[r][c] = player;
+    return old;
+}
 
 void Board::print(void)
 {
@@ -180,22 +187,83 @@ int Board::add_edge(int y, int x)
 }
 #endif
 
+void Box::set_owner(int player)
+{
+    b.set_owner(r, c, player);
+}
+
+bool Box::is_closed()
+{
+    std::vector<Edge> edge;
+    edge.reserve(4);
+    std::insert_iterator<std::vector<Edge> > edge_it = std::inserter(edge, edge.end());
+
+    int ct = 0;
+    for (int i = 0; i < 4; i++) {
+        ct += b.has_edge(edge[i]);
+    }
+
+    return ct == 4;
+}
+
+int Board::pull_up_edge(int r, int c)
+{
+    if (!rc_is_edge(r,c)) {
+        std::cerr << "invalid edge" << std::endl;
+        return -1;
+    }
+
+    /* get the max(2) boxes adjacent to the edge */
+    std::vector<Box> boxes;
+    std::insert_iterator<std::vector<Box> > boxes_it = std::inserter(boxes, boxes.end());
+    get_adjacent_boxes_to_edge(r, c, boxes_it);
+
+    int pts = 0;
+    /* count the number of boxes closed by this added edge. */
+    for (int i = 0; i < boxes.size(); i++) {
+        if (boxes[i].is_closed()) {
+            pts ++;
+            boxes[i].set_owner(0);
+        }
+    }
+
+    /* update the raw board */
+    raw_[r][c] = 0;
+
+    /* FIXME */
+    return pts;
+}
+
 int Board::make_move(int player, int r, int c) {
+
+    if (player != 1 && player != 2) {
+        std::cerr << "invalid player" << std::endl;
+        return -1;
+    }
 
     if (!rc_is_edge(r,c)) {
         std::cerr << "invalid edge" << std::endl;
         return -1;
     }
 
-    /* get list of Boxes closed by adding the edge. */
+    /* update the raw board */
+    raw_[r][c] = 1;
 
     /* get the max(2) boxes adjacent to the edge */
-    std::vector<Box> moves;
-    std::insert_iterator<std::vector<Box> > moves_it = std::inserter(moves, moves.end());
+    std::vector<Box> boxes;
+    std::insert_iterator<std::vector<Box> > boxes_it = std::inserter(boxes, boxes.end());
+    get_adjacent_boxes_to_edge(r, c, boxes_it);
 
-    raw_[r][c] = player;
-    // FIXME: Return the number of points that this move scored.
-    return 0;
+    int pts = 0;
+    /* count the number of boxes closed by this added edge. */
+    for (int i = 0; i < boxes.size(); i++) {
+        if (boxes[i].is_closed()) {
+            pts ++;
+            boxes[i].set_owner(player);
+        }
+    }
+
+    return pts;
 }
 
 /*
