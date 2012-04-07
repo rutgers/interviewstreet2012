@@ -116,23 +116,6 @@ void Board::read_input(void)
     }
 }
 
-#if 0
-class Edge {
-    public:
-        int x_, y_;
-        int r_, c_;
-
-        Board &board_;
-
-        Edge(board, x, y)
-        : board_(board)
-        , x_(x)
-        , y_(y)
-        {}
-
-};
-#endif
-
 bool Board::rc_is_valid(int r, int c)
 {
     bool r_valid = r >= 0 && r < bh_;
@@ -175,18 +158,6 @@ bool Board::has_edge(Edge &e)
     return has_edge(e.r, e.c);
 }
 
-#if 0
-int Board::add_edge(int y, int x)
-{
-    int r = y * 2;
-    int c = x * 2;
-
-    if (!rc_is_edge(r, c)) {
-        return -1;
-    }
-}
-#endif
-
 void Box::set_owner(int player)
 {
     b->set_owner(r, c, player);
@@ -197,6 +168,7 @@ bool Box::is_closed()
     std::vector<Edge> edge;
     edge.reserve(4);
     std::insert_iterator<std::vector<Edge> > edge_it = std::inserter(edge, edge.end());
+    b->get_edges_in_box(*this, edge_it);
 
     int ct = 0;
     for (int i = 0; i < 4; i++) {
