@@ -7,7 +7,7 @@ int main(void)
 {
 	Board b;
 	b.read_input();
-	b.print();
+	b.print_raw();
 
     std::vector<Move> moves;
     std::insert_iterator<std::vector<Move> > moves_it = std::inserter(moves, moves.end());

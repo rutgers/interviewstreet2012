@@ -70,6 +70,16 @@ void Board::print(void)
     }
 }
 
+void Board::print_raw(void)
+{
+    for (int r = 0; r < bh_; r++) {
+        for (int c = 0; c < bw_; c++) {
+            std::cout << raw_[r][c] << ' ';
+        }
+        std::cout << std::endl;
+    }
+}
+
 void Board::read_input(void)
 {
     for (int r = 0; r < bh_; r++) {

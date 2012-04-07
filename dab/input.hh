@@ -25,6 +25,7 @@ public:
     Board(void);
     void make_move(int player, int r, int c);
     void print(void);
+    void print_raw(void);
     void read_input(void);
 
     template <typename T>
