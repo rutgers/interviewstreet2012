@@ -10,11 +10,13 @@ int main(void)
 
     Game forReals;
     forReals.read_input();
-    Board b;
+    forReals.print();
+    /*Board b;
     b.read_input();
     b.print_raw();
+    b.print();
 
     Move move = play(b, 1);
-    std::cout << move.r() << ',' << move.c() << std::endl;
+    std::cout << move.r() << ',' << move.c() << std::endl;*/
     return 0;
 }

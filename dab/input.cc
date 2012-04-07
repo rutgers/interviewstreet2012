@@ -122,6 +122,7 @@ void Game::print(void)
 {
     std::cout << player_ << std::endl;
     board_.print();
+    board_.print_raw();
 }
 
 /*
