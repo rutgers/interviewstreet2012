@@ -17,7 +17,7 @@ TARGETS=test_in submit
 
 all:: $(TARGETS)
 
-all.cc :
+all.cc : input.hh input.cc test_in.cc
 	cat input.hh input.cc test_in.cc | sed 's/#include ".*"//g' > all.cc
 
 test: $(TEST_TARGET)
