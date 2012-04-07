@@ -4,9 +4,8 @@ CXX = clang++
 LD  = clang++
 RM  = rm -f
 CXXFLAGS = -MMD -Wall -g -Isrc -Iinclude/
-LDFLAGS  = $(CXXFLAGS) -lboost_signals-mt -lboost_system-mt -lboost_thread-mt -lboost_program_options-mt -pthreads
+LDFLAGS  = $(CXXFLAGS)
 #LIB_OBJ+=
-
 
 solve: dab.cc.o
 
@@ -32,4 +31,4 @@ $(TEST_TARGET): $(TEST_OBJECTS)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 
--include $(wildcard src/*.d) $(wildcard *.d)
+-include $(wildcard *.d)
