@@ -35,7 +35,7 @@ int Move::apply(void)
 
 void Move::unapply(void)
 {
-    board_->make_move(r_, c_, 0);
+    board_->make_move(0, r_, c_);
 }
 
 Move Move::invalid(void)
