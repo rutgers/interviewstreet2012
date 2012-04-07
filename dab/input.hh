@@ -24,15 +24,15 @@ class Board {
 public:
     Board(void);
     void make_move(int player, int r, int c);
-
-    void read_input(void);
     void print(void);
+    void read_input(void);
 
     template <typename T>
     void get_valid_moves(int player, std::insert_iterator<T> &moves)
     {
-        for (int r = 0; r < bw_; r += 2)
-        for (int c = 0; c < bw_; c += 2) {
+        // if the row is odd, look at even columns and vice versa
+        for (int r = 0; r < bh_; r += 2)
+        for (int c = ((r&1)==0); c < bw_; c += 2) {
             if (raw_[r][c] == 0) {
                 *moves = Move(this, player, r, c);
             }

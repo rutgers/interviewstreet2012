@@ -34,6 +34,42 @@ void Move::undo(void)
 Board::Board()
 {}
 
+void Board::print(void)
+{
+    for (int r = 0; r < bh_; r++) {
+        for (int c = 0; c < bw_; c++) {
+            bool col_odd = c%2;
+            bool row_odd = r%2;
+
+            if (!col_odd && !row_odd) {
+                std::cout << '.';
+            } else if (col_odd && !row_odd) {
+                if (raw_[r][c] == 1)
+                    std::cout << '-';
+                else
+                    std::cout << ' ';
+            } else if (col_odd && row_odd) {
+                if (raw_[r][c] != 0) {
+                    if (raw_[r][c] == 1)
+                        std::cout << 'A';
+                    if (raw_[r][c] == 2)
+                        std::cout << 'B';
+                }
+                else
+                    std::cout << ' ';
+            } else if (!col_odd && row_odd) {
+                if (raw_[r][c] == 1)
+                    std::cout << '|';
+                else
+                    std::cout <<' ';
+            } else {
+                std::cout << '?';
+            }
+        }
+        std::cout << std::endl;
+    }
+}
+
 void Board::read_input(void)
 {
     bool input_funky = false;
@@ -51,38 +87,6 @@ void Board::read_input(void)
                 raw_[r][c] = 0;
             }
         }
-    }
-}
-
-void Board::print(void)
-{
-    for (int r = 0; r < bh_; r++) {
-        for (int c = 0; c < bw_; c++) {
-            bool col_odd = c%2;
-            bool row_odd = r%2;
-
-            if (!col_odd && !row_odd) {
-                std::cout << '.';
-            } else if (col_odd && !row_odd) {
-                if (raw_[r][c] == 1)
-                    std::cout << '-';
-                else
-                    std::cout << ' ';
-            } else if (col_odd && row_odd) {
-                if (raw_[r][c] != 0)
-                    std::cout << raw_[r][c];
-                else
-                    std::cout << ' ';
-            } else if (!col_odd && row_odd) {
-                if (raw_[r][c] == 1)
-                    std::cout << '|';
-                else
-                    std::cout <<' ';
-            } else {
-                std::cout << '?';
-            }
-        }
-        std::cout << std::endl;
     }
 }
 
