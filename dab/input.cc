@@ -335,7 +335,7 @@ static int eval(Board move, int player)
     return 0;
 }
 
-static std::pair<Move, int> search(Board &board, int player, int depth)
+static std::pair<Move, int> search(Board &board, int us, int player, int depth, int alpha, int beta)
 {
     std::vector<Move> moves;
     std::insert_iterator<std::vector<Move> > moves_it = std::inserter(moves, moves.end());
@@ -382,6 +382,17 @@ static std::pair<Move, int> search(Board &board, int player, int depth)
                 optimal_moves.clear();
                 optimal_moves.push_back(move);
             }
+
+            // Alpha-beta pruning
+            if (player == us) {
+                alpha = std::max(alpha, optimal_score);
+            } else {
+                beta = std::min(beta, optimal_score);
+            }
+
+            if (beta <= alpha) {
+                break;
+            }
         }
 
         // Randomly select one of the equally optimal moves.
@@ -394,6 +405,8 @@ Move play(Board &board, int player, long timeout_ms)
 {
     DeltaTime timer;
 
+    int const alpha = std::numeric_limits<int>::min();
+    int const beta  = std::numeric_limits<int>::max();
     int const branching_factor = 36;
 
     for (int depth = 0; ; depth++) {
@@ -401,7 +414,7 @@ Move play(Board &board, int player, long timeout_ms)
 
         // Time how long a depth of search d takes.
         long const before_ms = timer.get_elapsed();
-        Move move = search(board, player, depth).first;
+        Move move = search(board, player, player, depth, alpha, beta).first;
         long const after_ms = timer.get_elapsed();
 
         // Estimate how long a search of depth (d + 1) will take using the
