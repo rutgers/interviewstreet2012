@@ -156,6 +156,9 @@ static int eval(Board move, int player)
 
 static std::pair<Move, int> search(Board &board, int player, int depth)
 {
+    int const next_player = player ^ 3;
+    std::cout << "depth = " << depth << std::endl;
+
     std::vector<Move> moves;
     std::insert_iterator<std::vector<Move> > moves_it = std::inserter(moves, moves.end());
     board.get_valid_moves(player, moves_it);
@@ -179,8 +182,7 @@ static std::pair<Move, int> search(Board &board, int player, int depth)
             Move &move = moves[i];
 
             int score_move = move.apply();
-            int score_subtree = search(board, player, depth - 1).second;
-            int score = score_move + score_subtree;
+            int score = score_move - search(board, next_player, depth - 1).second;
             move.unapply();
 
             if (score == optimal_score) {
