@@ -91,10 +91,15 @@ public:
     void get_valid_moves(int player, std::insert_iterator<T> &moves)
     {
         // if the row is odd, look at even columns and vice versa
-        for (int r = 0; r < bh_; r += 2)
-        for (int c = ((r&1)==0); c < bw_; c += 2) {
-            if (raw_[r][c] == 0) {
-                *moves = Move(this, player, r, c);
+        for (int r = 0; r < bh_; r ++)
+        for (int c = 0; c < bw_; c ++) {
+            bool c_odd = c % 2;
+            bool r_odd = r % 2;
+
+            if (r_odd ^ c_odd) {
+                if (raw_[r][c] == 0) {
+                    *moves = Move(this, player, r, c);
+                }
             }
         }
     }
