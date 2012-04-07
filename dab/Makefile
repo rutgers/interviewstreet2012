@@ -7,7 +7,6 @@ CXXFLAGS = -MMD -Wall -g -Isrc -Iinclude/
 LDFLAGS  = $(CXXFLAGS)
 #LIB_OBJ+=
 
-solve: dab.cc.o
 test_in : test_in.cc.o
 
 .PHONY: all test clean
