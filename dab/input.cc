@@ -335,6 +335,33 @@ static int eval(Board move, int player)
     return 0;
 }
 
+static int eval2(Board &move, int player)
+{
+    std::vector<Edge> edge;
+    edge.reserve(4);
+
+    int b3 = 0;
+
+    for (int c = 0; c < move.bw_; c++) {
+        for (int r = 0; r < move.bh_; r++) {
+            std::insert_iterator<std::vector<Edge> > edge_it = std::inserter(edge, edge.end());
+            move.get_edges_in_box(r, c, edge_it);
+
+            int ct = 0;
+            for (int i = 0; i < edge.size(); i++) {
+                if (move.has_edge(edge[i]))
+                    ct ++;
+            }
+
+            if (ct == 3)
+                b3++;
+
+            edge.clear();
+        }
+    }
+    return b3;
+}
+
 static std::pair<Move, int> search(Board &board, int us, int player, int depth, int alpha, int beta)
 {
     std::vector<Move> moves;
@@ -365,12 +392,12 @@ static std::pair<Move, int> search(Board &board, int us, int player, int depth, 
             // minimax min node).
             if (score_move == 0) {
                 next_player = player ^ 3;
-                score = score_move - search(board, next_player, depth - 1).second;
+                score = score_move - search(board, us, next_player, depth - 1, alpha, beta).second;
             }
             // If we scored a point, it's still our turn...so keep going.
             else {
                 next_player = player;
-                score = score_move + search(board, next_player, depth - 1).second;
+                score = score_move + search(board, us, next_player, depth - 1, alpha, beta).second;
             }
             move.unapply();
 
