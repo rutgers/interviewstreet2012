@@ -350,6 +350,7 @@ bool Board::closes_box(Move move)
     return ((nb > 3 || sb > 3 || wb > 3 || eb > 3)? true : false);
 }
 
+#if 0
 static int eval(Board currBoard, int player)
 {
     // FIXME: Use a real evaluation function...
@@ -396,6 +397,12 @@ static int eval(Board currBoard, int player)
     }*/
     
     return max + 1;  /* At least one move closes a box */
+}
+#endif
+
+static int eval(Board &move, int player)
+{
+    return 0;
 }
 
 static int eval2(Board &move, int player)
@@ -504,7 +511,7 @@ Move play(Board &board, int player, long timeout_ms)
     int const branching_factor = 36;
 
     for (int depth = 0; ; depth++) {
-        std::cerr << "depth = " << depth << std::endl;
+        //std::cerr << "depth = " << depth << std::endl;
 
         // Time how long a depth of search d takes.
         long const before_ms = timer.get_elapsed();
