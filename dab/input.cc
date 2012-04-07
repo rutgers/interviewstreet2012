@@ -151,18 +151,21 @@ bool Board::rc_is_box(int r, int c)
     return valid && c_odd && r_odd;
 }
 
-bool Board::has_edge(int y, int x)
+bool Board::has_edge(int r, int c)
 {
-    int r = y * 2;
-    int c = x * 2;
-
     if (!rc_is_edge(r, c)) {
+        std::cerr << "invalid edge" << std::endl;
         return false;
     }
 
     if (raw_[r][c] == 1)
         return true;
     return false;
+}
+
+bool Board::has_edge(Edge &e)
+{
+    return has_edge(e.r, e.c);
 }
 
 #if 0
@@ -176,7 +179,6 @@ int Board::add_edge(int y, int x)
     }
 }
 #endif
-
 
 int Board::make_move(int player, int r, int c) {
 

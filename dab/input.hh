@@ -27,13 +27,25 @@ private:
 
 class Box {
 public:
-    Board &b_;
-    int r_, c_;
+    Board &b;
+    int r, c;
 
-    Box(Board &b, int r, int c)
-    : b_(b)
-    , r_(r)
-    , c_(c)
+    Box(Board &b_, int r_, int c_)
+    : b(b_)
+    , r(r_)
+    , c(c_)
+    {}
+};
+
+class Edge {
+public:
+    Board &b;
+    int r, c;
+
+    Edge(Board &b_, int r_, int c_)
+    : b(b_)
+    , r(r_)
+    , c(c_)
     {}
 };
 
@@ -50,6 +62,16 @@ public:
     bool rc_is_box(int r, int c);
 
     bool has_edge(int y, int x);
+    bool has_edge(Edge &e);
+
+    template <typename T>
+    void get_edges_in_box(Box &b, std::insert_iterator<T> &edges)
+    {
+        *edges = Edge(*this, b.r + 1, b.c);
+        *edges = Edge(*this, b.r - 1, b.c);
+        *edges = Edge(*this, b.r,     b.c + 1);
+        *edges = Edge(*this, b.r,     b.c - 1);
+    }
 
     template <typename T>
     void get_adjacent_boxes_to_edge(int r, int c, std::insert_iterator<T> &boxes)
