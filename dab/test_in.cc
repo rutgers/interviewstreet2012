@@ -12,7 +12,7 @@ int main(void)
     forReals.read_input();
 
     Board &board = forReals.get_board();
-    Move move = play(board, 1, 3);
+    Move move = play(board, 1, 3000);
     std::cout << move.r() << ' ' << move.c() << std::endl;
     return 0;
 }

@@ -131,7 +131,7 @@ private:
 	int player_;
 };
 
-Move play(Board &board, int player, int depth);
+Move play(Board &board, int player, long timeout_ms);
 
 template <typename T>
 void Board::get_adjacent_boxes_to_edge(int r, int c, std::insert_iterator<T> &boxes)
