@@ -161,7 +161,7 @@ bool Board::rc_is_box(int r, int c)
 bool Board::has_edge(int r, int c)
 {
     if (!rc_is_edge(r, c)) {
-        std::cerr << "invalid edge" << std::endl;
+        std::cerr << "invalid edge c " << r << ", " << c << std::endl;
         return false;
     }
 
@@ -209,7 +209,7 @@ bool Box::is_closed()
 int Board::pull_up_edge(int r, int c)
 {
     if (!rc_is_edge(r,c)) {
-        std::cerr << "invalid edge" << std::endl;
+        std::cerr << "invalid edge b " << r << ", " << c << std::endl;
         return -1;
     }
 
@@ -243,7 +243,7 @@ int Board::make_move(int player, int r, int c)
     }
 
     if (!rc_is_edge(r,c)) {
-        std::cerr << "invalid edge " << r << ", " << c << std::endl;
+        std::cerr << "invalid edge a " << r << ", " << c << std::endl;
         return -1;
     }
 
