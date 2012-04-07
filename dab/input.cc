@@ -305,10 +305,6 @@ static std::pair<Move, int> search(Board &board, int player, int depth)
             int next_player;
             int score;
 
-            std::cout << "player " << player << "'s move:" << std::endl;
-            board.print();
-            std::cout << std::endl << std::endl;
-
             // If we didn't score a point, then proceed as usual (i.e. as a a
             // minimax min node).
             if (score_move == 0) {

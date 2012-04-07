@@ -13,7 +13,9 @@ int main(void)
     forReals.print();
 
     Board &board = forReals.get_board();
-    Move move = play(board, 1, 1);
+    Move move = play(board, 1, 3);
+    move.apply();
+    board.print();
     std::cout << move.r() << ',' << move.c() << std::endl;
     return 0;
 }
