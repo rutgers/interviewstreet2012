@@ -4,13 +4,39 @@
 #include <iostream>
 #include <iterator>
 
+class Board;
+
 class Move {
 public:
-    Move(int mr, int mc)
-        : r(mr), c(mc)
+    Move(Board *board, int player, int r, int c)
+        : board_(board),
+          player_(player),
+          r_(r),
+          c_(c)
     {}
 
-    int r, c;
+    int r(void) const {
+        return r_;
+    }
+
+    int c(void) const {
+        return c_;
+    }
+
+    void apply(void)
+    {
+        board_->make_move(player_, r_, c_);
+    }
+
+    void undo(void)
+    {
+        board_->make_move(r_, c_, 0);
+    }
+
+private:
+    Board *board_;
+    int player_;
+    int r_, c_;
 };
 
 class Board {
@@ -53,13 +79,17 @@ public:
 		}
 	}
 
+    void make_move(int player, int r, int c) {
+        raw[r][c] = player;
+    }
+
     template <typename T>
-    void get_valid_moves(std::insert_iterator<T> &moves)
+    void get_valid_moves(int player, std::insert_iterator<T> &moves)
     {
         for (int r = 0; r < bw; r += 2)
         for (int c = 0; c < bw; c += 2) {
             if (raw[r][c] == 0) {
-                *moves = Move(r, c);
+                *moves = Move(this, player, r, c);
             }
         }
     }
