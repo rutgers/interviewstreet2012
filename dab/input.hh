@@ -3,6 +3,14 @@
 
 #include <iostream>
 
+class Move {
+public:
+    Move(int mr, int mc)
+        : r(mr), c(mc)
+    {}
+
+    int const r, c;
+};
 
 class Board {
 public:
@@ -42,6 +50,17 @@ public:
 			std::cout << std::endl;
 		}
 	}
+
+    template <typename T>
+    void get_valid_moves(std::insert_iterator<T> &moves)
+    {
+        for (int r = 0; r < bh; r += 2)
+        for (int c = 0; c < bw; c += 2) {
+            if (raw[r][c] == 0) {
+                *moves = Move(r, c);
+            }
+        }
+    }
 };
 
 #endif
