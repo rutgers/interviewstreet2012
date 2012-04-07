@@ -96,7 +96,88 @@ void Board::read_input(void)
     }
 }
 
+#if 0
+class Edge {
+    public:
+        int x_, y_;
+        int r_, c_;
+
+        Board &board_;
+
+        Edge(board, x, y)
+        : board_(board)
+        , x_(x)
+        , y_(y)
+        {}
+
+};
+#endif
+
+bool Board::rc_is_valid(int r, int c)
+{
+    bool r_valid = r > 0 && r < bh_;
+    bool c_valid = c > 0 && c < bw_;
+    return r_valid && c_valid;
+}
+
+bool Board::rc_is_edge(int r, int c)
+{
+    bool valid = rc_is_valid(r, c);
+    bool c_odd = c % 2;
+    bool r_odd = r % 2;
+
+    return valid && (c_odd ^ r_odd);
+}
+
+bool Board::rc_is_box(int r, int c)
+{
+    bool valid = rc_is_valid(r, c);
+    bool c_odd = c % 2;
+    bool r_odd = r % 2;
+
+    return valid && c_odd && r_odd;
+}
+
+bool Board::has_edge(int y, int x)
+{
+    int r = y * 2;
+    int c = x * 2;
+
+    if (!rc_is_edge(r, c)) {
+        return false;
+    }
+
+    if (raw_[r][c] == 1)
+        return true;
+    return false;
+}
+
+#if 0
+int Board::add_edge(int y, int x)
+{
+    int r = y * 2;
+    int c = x * 2;
+
+    if (!rc_is_edge(r, c)) {
+        return -1;
+    }
+}
+#endif
+
+
 void Board::make_move(int player, int r, int c) {
+
+    if (!rc_is_edge(r,c)) {
+        std::cerr << "invalid edge" << std::endl;
+        return;
+    }
+
+    /* get list of Boxes closed by adding the edge. */
+
+    /* get the max(2) boxes adjacent to the edge */
+    std::vector<Box> moves;
+    std::insert_iterator<std::vector<Box> > moves_it = std::inserter(moves, moves.end());
+
     raw_[r][c] = player;
 }
 
