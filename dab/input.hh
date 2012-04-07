@@ -2,6 +2,7 @@
 #define INPUT_HH_
 
 #include <iostream>
+#include <iterator>
 
 class Move {
 public:
@@ -9,14 +10,15 @@ public:
         : r(mr), c(mc)
     {}
 
-    int const r, c;
+    int r, c;
 };
 
 class Board {
 public:
 	static const int bw = 11;
+    static const int bh = 11;
 
-	int raw[bw][bw];
+	int raw[bh][bw];
 	int player_num;
 
 	Board()
@@ -32,7 +34,7 @@ public:
 	{
 		std::cin >> player_num;
 
-		for (int r = 0; r < bw; r++) {
+		for (int r = 0; r < bh; r++) {
 			for (int c = 0; c < bw; c++) {
 				std::cin >> raw[r][c];
 			}
@@ -43,7 +45,7 @@ public:
 	{
 		std::cout << player_num << std::endl;
 
-		for (int r = 0; r < bw; r++) {
+		for (int r = 0; r < bh; r++) {
 			for (int c = 0; c < bw; c++) {
 				std::cout << raw[r][c] << ' ';
 			}
