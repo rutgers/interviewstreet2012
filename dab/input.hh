@@ -39,11 +39,11 @@ public:
 
 class Box {
 public:
-    Board &b;
+    Board *b;
     int r, c;
 
     Box();
-    Box(Board &b_, int r_, int c_)
+    Box(Board *b_, int r_, int c_)
     : b(b_)
     , r(r_)
     , c(c_)
@@ -140,18 +140,18 @@ void Board::get_adjacent_boxes_to_edge(int r, int c, std::insert_iterator<T> &bo
         int r2 = r + 1;
 
         if (rc_is_box(r1, c))
-            *boxes = Box(*this, r1, c);
+            *boxes = Box(this, r1, c);
 
         if (rc_is_box(r2, c))
-            *boxes = Box(*this, r2, c);
+            *boxes = Box(this, r2, c);
     } else {
         int c1 = c - 1;
         int c2 = c + 1;
 
         if (rc_is_box(r, c1))
-            *boxes = Box(*this, r, c1);
+            *boxes = Box(this, r, c1);
         if (rc_is_box(r, c2))
-            *boxes = Box(*this, r, c2);
+            *boxes = Box(this, r, c2);
     }
 }
 

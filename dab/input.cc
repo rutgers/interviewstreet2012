@@ -189,7 +189,7 @@ int Board::add_edge(int y, int x)
 
 void Box::set_owner(int player)
 {
-    b.set_owner(r, c, player);
+    b->set_owner(r, c, player);
 }
 
 bool Box::is_closed()
@@ -200,7 +200,7 @@ bool Box::is_closed()
 
     int ct = 0;
     for (int i = 0; i < 4; i++) {
-        ct += b.has_edge(edge[i]);
+        ct += b->has_edge(edge[i]);
     }
 
     return ct == 4;
