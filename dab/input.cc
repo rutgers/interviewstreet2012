@@ -1,7 +1,58 @@
 #include <algorithm>
+#include <limits>
 #include <cstdlib>
 #include <vector>
 #include "input.hh"
+#include <sys/time.h>
+
+/* Subtract the `struct timeval' values X and Y,
+   storing the result in RESULT.
+   Return 1 if the difference is negative, otherwise 0.  */
+
+int timeval_subtract (struct timeval *result, struct timeval *x, struct timeval *y)
+{
+    /* Perform the carry for the later subtraction by updating y. */
+    if (x->tv_usec < y->tv_usec) {
+        int nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
+        y->tv_usec -= 1000000 * nsec;
+        y->tv_sec += nsec;
+    }
+    if (x->tv_usec - y->tv_usec > 1000000) {
+        int nsec = (x->tv_usec - y->tv_usec) / 1000000;
+        y->tv_usec += 1000000 * nsec;
+        y->tv_sec -= nsec;
+    }
+
+    /* Compute the time remaining to wait.
+       tv_usec is certainly positive. */
+    result->tv_sec = x->tv_sec - y->tv_sec;
+    result->tv_usec = x->tv_usec - y->tv_usec;
+
+    /* Return 1 if result is negative. */
+    return x->tv_sec < y->tv_sec;
+}
+
+class DeltaTime {
+    private:
+        struct timeval tv_;
+
+    public:
+        DeltaTime() {
+            gettimeofday(&tv_, NULL);
+        }
+
+        long get_elapsed() {
+            struct timeval tv, diff;
+            gettimeofday(&tv, NULL);
+
+            timeval_subtract(&diff, &tv, &tv_);
+
+            if (diff.tv_usec)
+                return diff.tv_sec * 1000 + diff.tv_usec / 1000;
+            else
+                return diff.tv_sec * 1000;
+        }
+};
 
 /*
  * Move
@@ -52,53 +103,61 @@ Board::Board()
 int Board::set_owner(int player, int r, int c)
 {
     int old = raw_[r][c];
+    if (player != 0 && player != 1 && player != 2) {
+        std::cerr << "Bad player = " << player << std::endl;
+    }
     raw_[r][c] = player;
     return old;
 }
 
 void Board::print(void)
 {
+    std::ostream &o = std::cerr;
+
     for (int r = 0; r < bh_; r++) {
         for (int c = 0; c < bw_; c++) {
             bool col_odd = c%2;
             bool row_odd = r%2;
 
             if (!col_odd && !row_odd) {
-                std::cout << '.';
+                o << '.';
             } else if (col_odd && !row_odd) {
                 if (raw_[r][c] == 1)
-                    std::cout << '-';
+                    o << '-';
                 else
-                    std::cout << ' ';
+                    o << ' ';
             } else if (col_odd && row_odd) {
                 if (raw_[r][c] != 0) {
                     if (raw_[r][c] == 1)
-                        std::cout << 'A';
-                    if (raw_[r][c] == 2)
-                        std::cout << 'B';
+                        o << 'A';
+                    else if (raw_[r][c] == 2)
+                        o << 'B';
+                    else
+                        o << '?';
                 }
                 else
-                    std::cout << ' ';
+                    o << ' ';
             } else if (!col_odd && row_odd) {
                 if (raw_[r][c] == 1)
-                    std::cout << '|';
+                    o << '|';
                 else
-                    std::cout <<' ';
+                    o <<' ';
             } else {
-                std::cout << '?';
+                o << '?';
             }
         }
-        std::cout << std::endl;
+        o << std::endl;
     }
 }
 
 void Board::print_raw(void)
 {
+    std::ostream &o = std::cerr;
     for (int r = 0; r < bh_; r++) {
         for (int c = 0; c < bw_; c++) {
-            std::cout << raw_[r][c] << ' ';
+            o << raw_[r][c] << ' ';
         }
-        std::cout << std::endl;
+        o << std::endl;
     }
 }
 
@@ -160,7 +219,7 @@ bool Board::has_edge(Edge &e)
 
 void Box::set_owner(int player)
 {
-    b->set_owner(r, c, player);
+    b->set_owner(player, r, c);
 }
 
 bool Box::is_closed()
@@ -259,7 +318,7 @@ void Game::read_input(void)
 
 void Game::print(void)
 {
-    std::cout << player_ << std::endl;
+    std::cerr << player_ << std::endl;
     board_.print();
     board_.print_raw();
 }
@@ -339,7 +398,34 @@ static int eval(Board currBoard, int player)
     return max + 1;  /* At least one move closes a box */
 }
 
-static std::pair<Move, int> search(Board &board, int player, int depth)
+static int eval2(Board &move, int player)
+{
+    std::vector<Edge> edge;
+    edge.reserve(4);
+
+    int b3 = 0;
+
+    for (int c = 0; c < move.bw_; c++) {
+        for (int r = 0; r < move.bh_; r++) {
+            std::insert_iterator<std::vector<Edge> > edge_it = std::inserter(edge, edge.end());
+            move.get_edges_in_box(r, c, edge_it);
+
+            int ct = 0;
+            for (int i = 0; i < edge.size(); i++) {
+                if (move.has_edge(edge[i]))
+                    ct ++;
+            }
+
+            if (ct == 3)
+                b3++;
+
+            edge.clear();
+        }
+    }
+    return b3;
+}
+
+static std::pair<Move, int> search(Board &board, int us, int player, int depth, int alpha, int beta)
 {
     std::vector<Move> moves;
     std::insert_iterator<std::vector<Move> > moves_it = std::inserter(moves, moves.end());
@@ -361,7 +447,6 @@ static std::pair<Move, int> search(Board &board, int player, int depth)
         for (size_t i = 0; i < moves.size(); i++) {
             Move &move = moves[i];
 
-
             int score_move = move.apply();
             int next_player;
             int score;
@@ -370,12 +455,12 @@ static std::pair<Move, int> search(Board &board, int player, int depth)
             // minimax min node).
             if (score_move == 0) {
                 next_player = player ^ 3;
-                score = score_move - search(board, next_player, depth - 1).second;
+                score = score_move - search(board, us, next_player, depth - 1, alpha, beta).second;
             }
             // If we scored a point, it's still our turn...so keep going.
             else {
                 next_player = player;
-                score = score_move + search(board, next_player, depth - 1).second;
+                score = score_move + search(board, us, next_player, depth - 1, alpha, beta).second;
             }
             move.unapply();
 
@@ -387,6 +472,17 @@ static std::pair<Move, int> search(Board &board, int player, int depth)
                 optimal_moves.clear();
                 optimal_moves.push_back(move);
             }
+
+            // Alpha-beta pruning
+            if (player == us) {
+                alpha = std::max(alpha, optimal_score);
+            } else {
+                beta = std::min(beta, optimal_score);
+            }
+
+            if (beta <= alpha) {
+                break;
+            }
         }
 
         // Randomly select one of the equally optimal moves.
@@ -395,7 +491,30 @@ static std::pair<Move, int> search(Board &board, int player, int depth)
     }
 }
 
-Move play(Board &board, int player, int depth)
+Move play(Board &board, int player, long timeout_ms)
 {
-    return search(board, player, depth).first;
+    DeltaTime timer;
+
+    int const alpha = std::numeric_limits<int>::min();
+    int const beta  = std::numeric_limits<int>::max();
+    int const branching_factor = 36;
+
+    for (int depth = 0; ; depth++) {
+        std::cerr << "depth = " << depth << std::endl;
+
+        // Time how long a depth of search d takes.
+        long const before_ms = timer.get_elapsed();
+        Move move = search(board, player, player, depth, alpha, beta).first;
+        long const after_ms = timer.get_elapsed();
+
+        // Estimate how long a search of depth (d + 1) will take using the
+        // branching factor.
+        long const curr_ms = after_ms - before_ms;
+        long const next_ms = curr_ms * (branching_factor - depth);
+        std::cout << "curr (ms) = " << curr_ms << std::endl;
+        std::cout << "next (ms) = " << next_ms << std::endl;
+        if (timer.get_elapsed() + next_ms >= timeout_ms) {
+            return move;
+        }
+    }
 }

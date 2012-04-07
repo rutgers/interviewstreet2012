@@ -82,12 +82,18 @@ public:
     bool has_edge(Edge &e);
 
     template <typename T>
+    void get_edges_in_box(int r, int c, std::insert_iterator<T> &edges)
+    {
+        *edges = Edge(this, r + 1, c);
+        *edges = Edge(this, r - 1, c);
+        *edges = Edge(this, r,     c + 1);
+        *edges = Edge(this, r,     c - 1);
+    }
+
+    template <typename T>
     void get_edges_in_box(Box &b, std::insert_iterator<T> &edges)
     {
-        *edges = Edge(this, b.r + 1, b.c);
-        *edges = Edge(this, b.r - 1, b.c);
-        *edges = Edge(this, b.r,     b.c + 1);
-        *edges = Edge(this, b.r,     b.c - 1);
+        get_edges_in_box(b.r, b.c, edges);
     }
 
     template <typename T>
@@ -112,12 +118,11 @@ public:
     
     bool closes_box(Move);
 
-private:
     static int const bw_ = 11;
     static int const bh_ = 11;
+private:
     int raw_[bh_][bw_];
 };
-
 
 class Game {
 public:
@@ -127,6 +132,9 @@ public:
     void print(void);
 
     Board &get_board(void);
+    int    get_player(void) {
+        return player_;
+    }
 
     template <typename T>
     void get_valid_moves(std::insert_iterator<T> &moves)
@@ -139,7 +147,7 @@ private:
 	int player_;
 };
 
-Move play(Board &board, int player, int depth);
+Move play(Board &board, int player, long timeout_ms);
 
 template <typename T>
 void Board::get_adjacent_boxes_to_edge(int r, int c, std::insert_iterator<T> &boxes)

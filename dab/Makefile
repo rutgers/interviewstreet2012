@@ -3,12 +3,13 @@ all::
 CXX = clang++
 LD  = clang++
 RM  = rm -f
-CXXFLAGS = -MMD -Wall -g
+CXXFLAGS = -MMD -Wall -g -O2 -march=native
 LDFLAGS  = $(CXXFLAGS)
 #LIB_OBJ+=
 
 test_in : input.cc.o test_in.cc.o
-TARGETS=test_in
+submit  : all.cc.o
+TARGETS=test_in submit
 
 .PHONY: all test clean
 .SECONDARY:
@@ -16,10 +17,13 @@ TARGETS=test_in
 
 all:: $(TARGETS)
 
+all.cc : input.hh input.cc test_in.cc
+	cat input.hh input.cc test_in.cc | sed 's/#include ".*"//g' > all.cc
+
 test: $(TEST_TARGET)
 
 clean:
-	$(RM) $(TARGETS) $(LIB_OBJ) $(LIB_OBJ:.o=.d) $(TEST_TARGET) $(TEST_OBJECTS)
+	$(RM) $(TARGETS) *.o $(LIB_OBJ) $(LIB_OBJ:.o=.d) $(TEST_TARGET) $(TEST_OBJECTS) all.cc
 
 $(TARGETS):
 	$(LD) $(LDFLAGS) -o $@ $^
