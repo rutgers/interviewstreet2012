@@ -4,126 +4,63 @@
 #include <iostream>
 #include <iterator>
 
+class Board;
+
 class Move {
 public:
-    Move(int mr, int mc)
-        : r(mr), c(mc)
-    {}
+    Move(Board *board, int player, int r, int c);
+    int r(void) const;
+    int c(void) const;
+    void apply(void);
+    void undo(void);
 
-    int r, c;
+private:
+    Board *board_;
+    int player_;
+    int r_, c_;
 };
 
 class Board {
 public:
-	static const int bw = 11;
-	static const int bh = 11;
-	int raw[bh][bw];
-
-    Board()
-    {}
-
-    void read_input(void)
-	{
-		bool input_funky = false;
-
-		for (int r = 0; r < bh; r++) {
-			for (int c = 0; c < bw; c++) {
-				std::cin >> raw[r][c];
-				if (std::cin.fail()) {
-					std::cin.clear();
-					if (!input_funky) {
-						std::cerr << "Input file invalid (probably missing last row). Assuming '0'."
-					              << "Your only warning" << std::endl;
-						input_funky = true;
-					}
-					raw[r][c] = 0;
-				}
-			}
-		}
-	}
-
-    void print(void)
-	{
-		for (int r = 0; r < bh; r++) {
-			for (int c = 0; c < bw; c++) {
-				bool col_odd = c%2;
-				bool row_odd = r%2;
-
-				if (!col_odd && !row_odd) {
-					std::cout << '.';
-				} else if (col_odd && !row_odd) {
-					if (raw[r][c] == 1)
-						std::cout << '-';
-					else
-						std::cout << ' ';
-				} else if (col_odd && row_odd) {
-					if (raw[r][c] != 0) {
-                        if (raw[r][c] == 1)
-                            std::cout << 'A';
-                        if (raw[r][c] == 2)
-                            std::cout << 'B';
-                    }
-					else
-						std::cout << ' ';
-				} else if (!col_odd && row_odd) {
-					if (raw[r][c] == 1)
-						std::cout << '|';
-					else
-						std::cout <<' ';
-				} else {
-					std::cout << '?';
-				}
-			}
-			std::cout << std::endl;
-		}
-	}
+    Board(void);
+    void make_move(int player, int r, int c);
+    void print(void);
+    void read_input(void);
 
     template <typename T>
-    void get_valid_moves(std::insert_iterator<T> &moves)
+    void get_valid_moves(int player, std::insert_iterator<T> &moves)
     {
-        for (int r = 0; r < bw; r += 2)
-        /* if the row is odd, look at even columns and vice versa */
-        for (int c = ((r&1)==0); c < bw; c += 2) {
-            if (raw[r][c] == 0) {
-                *moves = Move(r, c);
+        // if the row is odd, look at even columns and vice versa
+        for (int r = 0; r < bh_; r += 2)
+        for (int c = ((r&1)==0); c < bw_; c += 2) {
+            if (raw_[r][c] == 0) {
+                *moves = Move(this, player, r, c);
             }
         }
     }
+
+private:
+    static int const bw_ = 11;
+    static int const bh_ = 11;
+    int raw_[bh_][bw_];
 };
 
 class Game {
 public:
-    Board board;
-	int player_num;
-
-	Game()
-	: player_num(0)
-	{}
-
-	bool is_init()
-	{
-		return player_num != 0;
-	}
-
-    void read_input(void)
-	{
-		std::cin >> player_num;
-        board.read_input();
-	}
-
-
-    void print(void)
-    {
-		std::cout << player_num << std::endl;
-        board.print();
-    }
+	Game(void);
+	bool is_init(void);
+    void read_input(void);
+    void print(void);
 
     template <typename T>
     void get_valid_moves(std::insert_iterator<T> &moves)
     {
-        board.get_valid_moves(moves);
+        board_.get_valid_moves(player_, moves);
     }
 
+private:
+    Board board_;
+	int player_;
 };
 
 #endif
