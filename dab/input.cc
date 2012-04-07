@@ -38,8 +38,7 @@ class DeltaTime {
         struct timeval tv_;
 
     public:
-        DeltaTime();
-        void start() {
+        DeltaTime() {
             gettimeofday(&tv_, NULL);
         }
 
