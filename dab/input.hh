@@ -27,10 +27,10 @@ private:
 
 class Edge {
 public:
-    Board &b;
+    Board *b;
     int r, c;
 
-    Edge(Board &b_, int r_, int c_)
+    Edge(Board *b_, int r_, int c_)
     : b(b_)
     , r(r_)
     , c(c_)
@@ -79,10 +79,10 @@ public:
     void get_edges_in_box(Box &b, std::insert_iterator<T> &edges)
     {
         std::cout << "box = " << b.r << ", " << b.c << std::endl;
-        *edges = Edge(*this, b.r + 1, b.c);
-        *edges = Edge(*this, b.r - 1, b.c);
-        *edges = Edge(*this, b.r,     b.c + 1);
-        *edges = Edge(*this, b.r,     b.c - 1);
+        *edges = Edge(this, b.r + 1, b.c);
+        *edges = Edge(this, b.r - 1, b.c);
+        *edges = Edge(this, b.r,     b.c + 1);
+        *edges = Edge(this, b.r,     b.c - 1);
     }
 
     template <typename T>
