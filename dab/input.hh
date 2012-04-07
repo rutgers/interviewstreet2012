@@ -78,6 +78,7 @@ public:
     template <typename T>
     void get_edges_in_box(Box &b, std::insert_iterator<T> &edges)
     {
+        std::cout << "box = " << b.r << ", " << b.c << std::endl;
         *edges = Edge(*this, b.r + 1, b.c);
         *edges = Edge(*this, b.r - 1, b.c);
         *edges = Edge(*this, b.r,     b.c + 1);
