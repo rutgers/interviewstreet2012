@@ -3,7 +3,7 @@ all::
 CXX = clang++
 LD  = clang++
 RM  = rm -f
-CXXFLAGS = -MMD -Wall -g
+CXXFLAGS = -MMD -Wall -g -O2 -march=native
 LDFLAGS  = $(CXXFLAGS)
 #LIB_OBJ+=
 
@@ -19,7 +19,7 @@ all:: $(TARGETS)
 test: $(TEST_TARGET)
 
 clean:
-	$(RM) $(TARGETS) $(LIB_OBJ) $(LIB_OBJ:.o=.d) $(TEST_TARGET) $(TEST_OBJECTS)
+	$(RM) $(TARGETS) *.o $(LIB_OBJ) $(LIB_OBJ:.o=.d) $(TEST_TARGET) $(TEST_OBJECTS)
 
 $(TARGETS):
 	$(LD) $(LDFLAGS) -o $@ $^

@@ -16,6 +16,7 @@ int main(void)
     Move move = play(board, 1, 3);
     move.apply();
     board.print();
+    board.print_raw();
     std::cout << move.r() << ',' << move.c() << std::endl;
     return 0;
 }

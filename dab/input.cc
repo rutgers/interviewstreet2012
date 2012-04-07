@@ -52,6 +52,9 @@ Board::Board()
 int Board::set_owner(int player, int r, int c)
 {
     int old = raw_[r][c];
+    if (player != 1 && player != 2) {
+        std::cerr << "Bad" << std::endl;
+    }
     raw_[r][c] = player;
     return old;
 }
@@ -74,8 +77,10 @@ void Board::print(void)
                 if (raw_[r][c] != 0) {
                     if (raw_[r][c] == 1)
                         std::cout << 'A';
-                    if (raw_[r][c] == 2)
+                    else if (raw_[r][c] == 2)
                         std::cout << 'B';
+                    else
+                        std::cout << '?';
                 }
                 else
                     std::cout << ' ';
