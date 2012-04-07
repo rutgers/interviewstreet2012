@@ -300,9 +300,14 @@ static std::pair<Move, int> search(Board &board, int player, int depth)
         for (size_t i = 0; i < moves.size(); i++) {
             Move &move = moves[i];
 
+
             int score_move = move.apply();
             int next_player;
             int score;
+
+            std::cout << "player " << player << "'s move:" << std::endl;
+            board.print();
+            std::cout << std::endl << std::endl;
 
             // If we didn't score a point, then proceed as usual (i.e. as a a
             // minimax min node).
