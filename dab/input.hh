@@ -1,7 +1,7 @@
 #ifndef INPUT_HH_
 #define INPUT_HH_
 
-#include <istream>
+#include <iostream>
 
 
 class Board {
@@ -37,11 +37,11 @@ public:
 
 		for (int r = 0; r < bw; r++) {
 			for (int c = 0; c < bw; c++) {
-				std::cout << raw[r,c] << ' ';
+				std::cout << raw[r][c] << ' ';
 			}
 			std::cout << std::endl;
 		}
 	}
-}
+};
 
 #endif

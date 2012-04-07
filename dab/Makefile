@@ -8,11 +8,11 @@ LDFLAGS  = $(CXXFLAGS)
 #LIB_OBJ+=
 
 test_in : test_in.cc.o
+TARGETS=test_in
 
 .PHONY: all test clean
 .SECONDARY:
 
-TARGETS=solve
 
 all:: $(TARGETS)
 
