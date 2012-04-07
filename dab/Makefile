@@ -3,11 +3,11 @@ all::
 CXX = clang++
 LD  = clang++
 RM  = rm -f
-CXXFLAGS = -MMD -Wall -g -Isrc -Iinclude/
+CXXFLAGS = -MMD -Wall -g
 LDFLAGS  = $(CXXFLAGS)
 #LIB_OBJ+=
 
-test_in : test_in.cc.o
+test_in : input.cc.o test_in.cc.o
 TARGETS=test_in
 
 .PHONY: all test clean
