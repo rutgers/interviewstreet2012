@@ -56,6 +56,12 @@ public:
 class Board {
 public:
     Board(void);
+    Board(const Board &xboard)
+    {
+        for (int r = 0; r < bh_; ++r)
+        for (int c = 0; c < bw_; ++c)
+            raw_[r][c] = xboard.raw_[r][c];
+    }
 
     /* returns positive points GAINED or negative on error */
     int make_move(int player, int r, int c);
@@ -109,6 +115,8 @@ public:
             }
         }
     }
+    
+    bool closes_box(Move);
 
     static int const bw_ = 11;
     static int const bh_ = 11;
