@@ -3,7 +3,7 @@ all::
 CXX = clang++
 LD  = clang++
 RM  = rm -f
-CXXFLAGS = -MMD -Wall -g -Isrc -Iinclude/
+CXXFLAGS = -MMD -Wall -g
 LDFLAGS  = $(CXXFLAGS)
 #LIB_OBJ+=
 

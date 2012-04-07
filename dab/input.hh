@@ -57,8 +57,12 @@ public:
 					else
 						std::cout << ' ';
 				} else if (col_odd && row_odd) {
-					if (raw[r][c] != 0)
-						std::cout << raw[r][c];
+					if (raw[r][c] != 0) {
+                        if (raw[r][c] == 1)
+                            std::cout << 'A';
+                        if (raw[r][c] == 2)
+                            std::cout << 'B';
+                    }
 					else
 						std::cout << ' ';
 				} else if (!col_odd && row_odd) {
