@@ -8,9 +8,11 @@ int main(void)
 {
     srand(time(NULL));
 
-	Board b;
-	b.read_input();
-	b.print_raw();
+    Game forReals;
+    forReals.read_input();
+    Board b;
+    b.read_input();
+    b.print_raw();
 
     Move move = play(b, 1);
     std::cout << move.r() << ',' << move.c() << std::endl;
