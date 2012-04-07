@@ -1,10 +1,9 @@
 #include <algorithm>
+#include <limits>
 #include <cstdlib>
 #include <vector>
 #include "input.hh"
 #include <sys/time.h>
-
-
 
 /* Subtract the `struct timeval' values X and Y,
    storing the result in RESULT.
