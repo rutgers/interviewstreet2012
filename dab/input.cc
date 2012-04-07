@@ -239,24 +239,19 @@ static int eval(Board move, int player)
 
 static std::pair<Move, int> search(Board &board, int player, int depth)
 {
-    int const next_player = player ^ 3;
-    std::cout << "depth = " << depth << std::endl;
-
     std::vector<Move> moves;
     std::insert_iterator<std::vector<Move> > moves_it = std::inserter(moves, moves.end());
     board.get_valid_moves(player, moves_it);
 
-    // Nothing to see here...
     if (moves.empty()) {
         return std::make_pair(Move::invalid(), 0);
     }
-    // We've bottomed out in the search. Use the evaluation functions instead
-    // of a recursive search.
+    // We've bottomed out in the search, so use the evaluation function.
     else if (depth <= 0) {
         int const value = eval(board, player);
         return std::make_pair(Move::invalid(), value);
     }
-    // Recursively deepen the search. 
+    // Recursive minimax search.
     else {
         std::vector<Move> optimal_moves;
         int optimal_score = 0;
@@ -265,9 +260,23 @@ static std::pair<Move, int> search(Board &board, int player, int depth)
             Move &move = moves[i];
 
             int score_move = move.apply();
-            int score = score_move - search(board, next_player, depth - 1).second;
+            int next_player;
+            int score;
+
+            // If we didn't score a point, then proceed as usual (i.e. as a a
+            // minimax min node).
+            if (score_move == 0) {
+                next_player = player ^ 3;
+                score = score_move - search(board, next_player, depth - 1).second;
+            }
+            // If we scored a point, it's still our turn...so keep going.
+            else {
+                next_player = player;
+                score = score_move + search(board, next_player, depth - 1).second;
+            }
             move.unapply();
 
+            // Keep track of a set of equally optimal values.
             if (score == optimal_score) {
                 optimal_moves.push_back(move);
             } else if (score > optimal_score) {
@@ -277,7 +286,7 @@ static std::pair<Move, int> search(Board &board, int player, int depth)
             }
         }
 
-        // Randomly select one of the "equally optimal" moves.
+        // Randomly select one of the equally optimal moves.
         int const i = rand() % optimal_moves.size();
         return std::make_pair(optimal_moves[i], optimal_score);
     }
