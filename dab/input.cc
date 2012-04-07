@@ -1,3 +1,5 @@
+#include <cstdlib>
+#include <vector>
 #include <input.hh>
 
 /*
@@ -116,4 +118,17 @@ void Game::print(void)
 {
     std::cout << player_ << std::endl;
     board_.print();
+}
+
+/*
+ * Play
+ */
+Move play(Board &board, int player)
+{
+    std::vector<Move> moves;
+    std::insert_iterator<std::vector<Move> > moves_it = std::inserter(moves, moves.end());
+    board.get_valid_moves(player, moves_it);
+
+    int i = rand() % moves.size();
+    return moves[i];
 }
