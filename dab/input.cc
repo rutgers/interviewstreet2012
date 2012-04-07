@@ -53,7 +53,7 @@ int Board::set_owner(int player, int r, int c)
 {
     int old = raw_[r][c];
     if (player != 0 && player != 1 && player != 2) {
-        std::cerr << "Bad" << std::endl;
+        std::cerr << "Bad player = " << player << std::endl;
     }
     raw_[r][c] = player;
     return old;
