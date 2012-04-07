@@ -1,4 +1,4 @@
-#include <input.hh>
+#include "input.hh"
 
 /*
  * Move
@@ -72,18 +72,12 @@ void Board::print(void)
 
 void Board::read_input(void)
 {
-    bool input_funky = false;
-
     for (int r = 0; r < bh_; r++) {
         for (int c = 0; c < bw_; c++) {
             std::cin >> raw_[r][c];
             if (std::cin.fail()) {
                 std::cin.clear();
-                if (!input_funky) {
-                    std::cerr << "Input file invalid (probably missing last row). Assuming '0'."
-                              << "Your only warning" << std::endl;
-                    input_funky = true;
-                }
+                std::cerr << "input invalid @ (" << r << ',' << c << "). Assuming '0'." << std::endl;
                 raw_[r][c] = 0;
             }
         }
