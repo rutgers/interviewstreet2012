@@ -165,9 +165,7 @@ bool Board::has_edge(Edge &e)
 
 void Box::set_owner(int player)
 {
-    std::cout << "before p2 = " << player << std::endl;
     b->set_owner(player, r, c);
-    std::cout << "after" << std::endl;
 }
 
 bool Box::is_closed()
@@ -239,9 +237,7 @@ int Board::make_move(int player, int r, int c)
     for (int i = 0; i < boxes.size(); i++) {
         if (boxes[i].is_closed()) {
             pts ++;
-            std::cout << "before p1 = " << player << std::endl;
             boxes[i].set_owner(player);
-            std::cout << "after" << std::endl;
         }
     }
 
@@ -308,7 +304,6 @@ static std::pair<Move, int> search(Board &board, int player, int depth)
 
         for (size_t i = 0; i < moves.size(); i++) {
             Move &move = moves[i];
-
 
             int score_move = move.apply();
             int next_player;
