@@ -128,8 +128,8 @@ class Edge {
 
 bool Board::rc_is_valid(int r, int c)
 {
-    bool r_valid = r > 0 && r < bh_;
-    bool c_valid = c > 0 && c < bw_;
+    bool r_valid = r >= 0 && r < bh_;
+    bool c_valid = c >= 0 && c < bw_;
     return r_valid && c_valid;
 }
 
@@ -178,10 +178,10 @@ int Board::add_edge(int y, int x)
 #endif
 
 
-int Board::make_move(int player, int r, int c) {
-
+int Board::make_move(int player, int r, int c)
+{
     if (!rc_is_edge(r,c)) {
-        std::cerr << "invalid edge" << std::endl;
+        std::cerr << "invalid edge " << r << ", " << c << std::endl;
         return -1;
     }
 
