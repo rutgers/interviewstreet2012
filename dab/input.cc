@@ -425,8 +425,12 @@ static std::pair<Move, int> search(Board &board, int us, int player, int depth, 
         }
 
         // Randomly select one of the equally optimal moves.
-        int const i = rand() % optimal_moves.size();
-        return std::make_pair(optimal_moves[i], optimal_score);
+        if (optimal_moves.empty()) {
+            return std::make_pair(Move::invalid(), optimal_score);
+        } else {
+            int const i = rand() % optimal_moves.size();
+            return std::make_pair(optimal_moves[i], optimal_score);
+        }
     }
 }
 
@@ -450,8 +454,6 @@ Move play(Board &board, int player, long timeout_ms)
         // branching factor.
         long const curr_ms = after_ms - before_ms;
         long const next_ms = curr_ms * (branching_factor - depth);
-        std::cout << "curr (ms) = " << curr_ms << std::endl;
-        std::cout << "next (ms) = " << next_ms << std::endl;
         if (timer.get_elapsed() + next_ms >= timeout_ms) {
             return move;
         }
