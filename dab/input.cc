@@ -392,24 +392,26 @@ static std::pair<Move, int> search(Board &board, int player, int depth)
 
 Move play(Board &board, int player, long timeout_ms)
 {
-    TimeDelta timer;
+    DeltaTime timer;
 
-    Move optimal_move;
     int const branching_factor = 36;
 
     for (int depth = 0; ; depth++) {
         std::cerr << "depth = " << depth << std::endl;
 
         // Time how long a depth of search d takes.
-        long const before_ms = delta.get_elapsed();
-        optimal_move = search(board, player, depth).first;
-        long const after_ms = delta.get_elapsed();
+        long const before_ms = timer.get_elapsed();
+        Move move = search(board, player, depth).first;
+        long const after_ms = timer.get_elapsed();
 
         // Estimate how long a search of depth (d + 1) will take using the
         // branching factor.
-        long const next_ms = (after_ms - before_ms) * (branching_factor - depth);
+        long const curr_ms = after_ms - before_ms;
+        long const next_ms = curr_ms * (branching_factor - depth);
+        std::cout << "curr (ms) = " << curr_ms << std::endl;
+        std::cout << "next (ms) = " << next_ms << std::endl;
         if (timer.get_elapsed() + next_ms >= timeout_ms) {
-            return optimal_move;
+            return move;
         }
     }
 }
