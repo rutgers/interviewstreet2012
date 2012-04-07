@@ -22,10 +22,6 @@ private:
 
 class Board {
 public:
-	static const int bw = 11;
-	static const int bh = 11;
-	int raw[bh][bw];
-
     Board(void);
     void make_move(int player, int r, int c);
 
@@ -35,20 +31,22 @@ public:
     template <typename T>
     void get_valid_moves(int player, std::insert_iterator<T> &moves)
     {
-        for (int r = 0; r < bw; r += 2)
-        for (int c = 0; c < bw; c += 2) {
-            if (raw[r][c] == 0) {
+        for (int r = 0; r < bw_; r += 2)
+        for (int c = 0; c < bw_; c += 2) {
+            if (raw_[r][c] == 0) {
                 *moves = Move(this, player, r, c);
             }
         }
     }
+
+private:
+    static int const bw_ = 11;
+    static int const bh_ = 11;
+    int raw_[bh_][bw_];
 };
 
 class Game {
 public:
-    Board board;
-	int player_num;
-
 	Game(void);
 	bool is_init(void);
     void read_input(void);
@@ -57,9 +55,12 @@ public:
     template <typename T>
     void get_valid_moves(std::insert_iterator<T> &moves)
     {
-        board.get_valid_moves(player_num, moves);
+        board_.get_valid_moves(player_, moves);
     }
 
+private:
+    Board board_;
+	int player_;
 };
 
 #endif

@@ -38,9 +38,9 @@ void Board::read_input(void)
 {
     bool input_funky = false;
 
-    for (int r = 0; r < bh; r++) {
-        for (int c = 0; c < bw; c++) {
-            std::cin >> raw[r][c];
+    for (int r = 0; r < bh_; r++) {
+        for (int c = 0; c < bw_; c++) {
+            std::cin >> raw_[r][c];
             if (std::cin.fail()) {
                 std::cin.clear();
                 if (!input_funky) {
@@ -48,7 +48,7 @@ void Board::read_input(void)
                               << "Your only warning" << std::endl;
                     input_funky = true;
                 }
-                raw[r][c] = 0;
+                raw_[r][c] = 0;
             }
         }
     }
@@ -56,25 +56,25 @@ void Board::read_input(void)
 
 void Board::print(void)
 {
-    for (int r = 0; r < bh; r++) {
-        for (int c = 0; c < bw; c++) {
+    for (int r = 0; r < bh_; r++) {
+        for (int c = 0; c < bw_; c++) {
             bool col_odd = c%2;
             bool row_odd = r%2;
 
             if (!col_odd && !row_odd) {
                 std::cout << '.';
             } else if (col_odd && !row_odd) {
-                if (raw[r][c] == 1)
+                if (raw_[r][c] == 1)
                     std::cout << '-';
                 else
                     std::cout << ' ';
             } else if (col_odd && row_odd) {
-                if (raw[r][c] != 0)
-                    std::cout << raw[r][c];
+                if (raw_[r][c] != 0)
+                    std::cout << raw_[r][c];
                 else
                     std::cout << ' ';
             } else if (!col_odd && row_odd) {
-                if (raw[r][c] == 1)
+                if (raw_[r][c] == 1)
                     std::cout << '|';
                 else
                     std::cout <<' ';
@@ -87,29 +87,29 @@ void Board::print(void)
 }
 
 void Board::make_move(int player, int r, int c) {
-    raw[r][c] = player;
+    raw_[r][c] = player;
 }
 
 /*
  * Game
  */
 Game::Game()
-    : player_num(0)
+    : player_(0)
 {}
 
-bool Game::is_init()
+bool Game::is_init(void)
 {
-    return player_num != 0;
+    return player_ != 0;
 }
 
 void Game::read_input(void)
 {
-    std::cin >> player_num;
-    board.read_input();
+    std::cin >> player_;
+    board_.read_input();
 }
 
 void Game::print(void)
 {
-    std::cout << player_num << std::endl;
-    board.print();
+    std::cout << player_ << std::endl;
+    board_.print();
 }
