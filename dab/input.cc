@@ -53,7 +53,7 @@ int Board::set_owner(int player, int r, int c)
 {
     int old = raw_[r][c];
     if (player != 0 && player != 1 && player != 2) {
-        std::cerr << "Bad" << std::endl;
+        std::cerr << "Bad player = " << player << std::endl;
     }
     raw_[r][c] = player;
     return old;
@@ -61,49 +61,52 @@ int Board::set_owner(int player, int r, int c)
 
 void Board::print(void)
 {
+    std::ostream &o = std::cerr;
+
     for (int r = 0; r < bh_; r++) {
         for (int c = 0; c < bw_; c++) {
             bool col_odd = c%2;
             bool row_odd = r%2;
 
             if (!col_odd && !row_odd) {
-                std::cout << '.';
+                o << '.';
             } else if (col_odd && !row_odd) {
                 if (raw_[r][c] == 1)
-                    std::cout << '-';
+                    o << '-';
                 else
-                    std::cout << ' ';
+                    o << ' ';
             } else if (col_odd && row_odd) {
                 if (raw_[r][c] != 0) {
                     if (raw_[r][c] == 1)
-                        std::cout << 'A';
+                        o << 'A';
                     else if (raw_[r][c] == 2)
-                        std::cout << 'B';
+                        o << 'B';
                     else
-                        std::cout << '?';
+                        o << '?';
                 }
                 else
-                    std::cout << ' ';
+                    o << ' ';
             } else if (!col_odd && row_odd) {
                 if (raw_[r][c] == 1)
-                    std::cout << '|';
+                    o << '|';
                 else
-                    std::cout <<' ';
+                    o <<' ';
             } else {
-                std::cout << '?';
+                o << '?';
             }
         }
-        std::cout << std::endl;
+        o << std::endl;
     }
 }
 
 void Board::print_raw(void)
 {
+    std::ostream &o = std::cerr;
     for (int r = 0; r < bh_; r++) {
         for (int c = 0; c < bw_; c++) {
-            std::cout << raw_[r][c] << ' ';
+            o << raw_[r][c] << ' ';
         }
-        std::cout << std::endl;
+        o << std::endl;
     }
 }
 
@@ -264,7 +267,7 @@ void Game::read_input(void)
 
 void Game::print(void)
 {
-    std::cout << player_ << std::endl;
+    std::cerr << player_ << std::endl;
     board_.print();
     board_.print_raw();
 }
