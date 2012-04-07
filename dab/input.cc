@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstdlib>
 #include <vector>
 #include "input.hh"
@@ -5,6 +6,12 @@
 /*
  * Move
  */
+Move::Move(void)
+    : board_(NULL),
+      player_(0)
+{
+}
+
 Move::Move(Board *board, int player, int r, int c)
     : board_(board),
       player_(player),
@@ -12,22 +19,34 @@ Move::Move(Board *board, int player, int r, int c)
       c_(c)
 {}
 
-int Move::r(void) const {
+int Move::r(void) const
+{
     return r_;
 }
 
-int Move::c(void) const {
+int Move::c(void) const
+{
     return c_;
 }
 
-void Move::apply(void)
+bool Move::is_invalid(void) const
 {
-    board_->make_move(player_, r_, c_);
+    return board_ == NULL;
 }
 
-void Move::undo(void)
+int Move::apply(void)
+{
+    return board_->make_move(player_, r_, c_);
+}
+
+void Move::unapply(void)
 {
     board_->make_move(r_, c_, 0);
+}
+
+Move Move::invalid(void)
+{
+    return Move();
 }
 
 /*
@@ -86,8 +105,10 @@ void Board::read_input(void)
     }
 }
 
-void Board::make_move(int player, int r, int c) {
+int Board::make_move(int player, int r, int c) {
     raw_[r][c] = player;
+    // FIXME: Return the number of points that this move scored.
+    return 0;
 }
 
 /*
@@ -117,12 +138,57 @@ void Game::print(void)
 /*
  * Play
  */
-Move play(Board &board, int player)
+static int eval(Board move, int player)
+{
+    // FIXME: Use a real evaluation function...
+    return 0;
+}
+
+static std::pair<Move, int> search(Board &board, int player, int depth)
 {
     std::vector<Move> moves;
     std::insert_iterator<std::vector<Move> > moves_it = std::inserter(moves, moves.end());
     board.get_valid_moves(player, moves_it);
 
-    int i = rand() % moves.size();
-    return moves[i];
+    // Nothing to see here...
+    if (moves.empty()) {
+        return std::make_pair(Move::invalid(), 0);
+    }
+    // We've bottomed out in the search. Use the evaluation functions instead
+    // of a recursive search.
+    else if (depth <= 0) {
+        int const value = eval(board, player);
+        return std::make_pair(Move::invalid(), value);
+    }
+    // Recursively deepen the search. 
+    else {
+        std::vector<Move> optimal_moves;
+        int optimal_score = 0;
+
+        for (size_t i = 0; i < moves.size(); i++) {
+            Move &move = moves[i];
+
+            int score_move = move.apply();
+            int score_subtree = search(board, player, depth - 1).second;
+            int score = score_move + score_subtree;
+            move.unapply();
+
+            if (score == optimal_score) {
+                optimal_moves.push_back(move);
+            } else if (score > optimal_score) {
+                optimal_score = score;
+                optimal_moves.clear();
+                optimal_moves.push_back(move);
+            }
+        }
+
+        // Randomly select one of the "equally optimal" moves.
+        int const i = rand() % optimal_moves.size();
+        return std::make_pair(optimal_moves[i], optimal_score);
+    }
+}
+
+Move play(Board &board, int player, int depth)
+{
+    return search(board, player, depth).first;
 }

@@ -9,12 +9,19 @@ class Board;
 class Move {
 public:
     Move(Board *board, int player, int r, int c);
+
     int r(void) const;
     int c(void) const;
-    void apply(void);
-    void undo(void);
+    bool is_invalid(void) const;
+
+    int apply(void);
+    void unapply(void);
+
+    static Move invalid(void);
 
 private:
+    Move(void);
+
     Board *board_;
     int player_;
     int r_, c_;
@@ -23,7 +30,7 @@ private:
 class Board {
 public:
     Board(void);
-    void make_move(int player, int r, int c);
+    int make_move(int player, int r, int c);
     void print(void);
     void read_input(void);
 
@@ -63,7 +70,7 @@ private:
 	int player_;
 };
 
-Move play(Board &board, int player);
+Move play(Board &board, int player, int depth);
 
 #endif
 

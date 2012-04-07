@@ -12,7 +12,7 @@ int main(void)
 	b.read_input();
 	b.print();
 
-    Move move = play(b, 1);
+    Move move = play(b, 1, 0);
     std::cout << move.r() << ',' << move.c() << std::endl;
     return 0;
 }
