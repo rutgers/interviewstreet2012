@@ -6,12 +6,6 @@
 /*
  * Move
  */
-Move::Move(void)
-    : board_(NULL),
-      player_(0)
-{
-}
-
 Move::Move(Board *board, int player, int r, int c)
     : board_(board),
       player_(player),
@@ -46,7 +40,7 @@ void Move::unapply(void)
 
 Move Move::invalid(void)
 {
-    return Move();
+    return Move(NULL, 0, -1, -1);
 }
 
 /*
@@ -86,6 +80,16 @@ void Board::print(void)
             } else {
                 std::cout << '?';
             }
+        }
+        std::cout << std::endl;
+    }
+}
+
+void Board::print_raw(void)
+{
+    for (int r = 0; r < bh_; r++) {
+        for (int c = 0; c < bw_; c++) {
+            std::cout << raw_[r][c] << ' ';
         }
         std::cout << std::endl;
     }
@@ -133,6 +137,12 @@ void Game::print(void)
 {
     std::cout << player_ << std::endl;
     board_.print();
+    board_.print_raw();
+}
+
+Board &Game::get_board(void)
+{
+    return board_;
 }
 
 /*

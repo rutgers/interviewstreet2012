@@ -20,8 +20,6 @@ public:
     static Move invalid(void);
 
 private:
-    Move(void);
-
     Board *board_;
     int player_;
     int r_, c_;
@@ -32,6 +30,7 @@ public:
     Board(void);
     int make_move(int player, int r, int c);
     void print(void);
+    void print_raw(void);
     void read_input(void);
 
     template <typename T>
@@ -58,6 +57,8 @@ public:
 	bool is_init(void);
     void read_input(void);
     void print(void);
+
+    Board &get_board(void);
 
     template <typename T>
     void get_valid_moves(std::insert_iterator<T> &moves)
