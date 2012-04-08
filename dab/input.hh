@@ -116,7 +116,7 @@ public:
         }
     }
     
-    bool closes_box(Move);
+    bool closes_box(int, int);
 
     static int const bw_ = 11;
     static int const bh_ = 11;

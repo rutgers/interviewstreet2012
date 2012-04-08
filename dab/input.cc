@@ -425,7 +425,7 @@ static std::pair<Move, int> search(Board &board, int us, int player, int depth, 
     }
     // We've bottomed out in the search, so use the evaluation function.
     else if (depth <= 0) {
-        int const value = eval2(board, player);
+        int const value = eval(board, player);
         return std::make_pair(Move::invalid(), value);
     }
     // Recursive minimax search.
