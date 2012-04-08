@@ -124,6 +124,9 @@ public:
     void print(void);
 
     Board &get_board(void);
+    int    get_player(void) {
+        return player_;
+    }
 
     template <typename T>
     void get_valid_moves(std::insert_iterator<T> &moves)
