@@ -437,14 +437,19 @@ static std::pair<Move, int> search(Board &board, int us, int player, int depth, 
             int score_move = move.apply();
             int score;
 
+#ifdef DEBUG
             std::cerr << std::endl << "player " << player << " at depth " << depth
+                      << " [ move = " << move.r() << ", " << move.c() << " ] "
                       << " [ move_score = " << score_move << " ]" << std::endl;
             board.print();
             std::cerr << std::endl << std::endl;
+#endif
 
             // If we didn't score a point, then proceed as usual (i.e. as a a
             // minimax min node).
+#ifdef DEBUG
             std::cerr << ">>>RECURSIVE START" << std::endl;
+#endif
             if (score_move == 0) {
                 int next_player = player ^ 3;
                 score = score_move - search(board, us, next_player, depth - 1, alpha, beta).second;
@@ -453,7 +458,9 @@ static std::pair<Move, int> search(Board &board, int us, int player, int depth, 
             else {
                 score = score_move + search(board, us, player, depth - 1, alpha, beta).second;
             }
+#ifdef DEBUG
             std::cerr << "<<<RECURSIVE END [ move_score = " << score << " ]" << std::endl;
+#endif
 
             move.unapply();
 
@@ -469,12 +476,17 @@ static std::pair<Move, int> search(Board &board, int us, int player, int depth, 
             // Alpha-beta pruning
             if (player == us) {
                 alpha = std::max(alpha, optimal_score);
+                if (beta <= alpha) {
+                    return std::make_pair(move, alpha);
+                }
             } else {
                 beta = std::min(beta, optimal_score);
+                if (beta <= alpha) {
+                    return std::make_pair(move, beta);
+                }
             }
 
             if (beta <= alpha) {
-                break;
             }
         }
 
@@ -496,8 +508,16 @@ Move play(Board &board, int player, long timeout_ms)
     int const beta  = std::numeric_limits<int>::max();
     int const branching_factor = 36;
 
+#ifdef DEBUG
+    std::cerr << "STARTING BOARD" << std::endl;
+    board.print();
+    std::cerr << std::endl << std::endl;
+#endif
+
     for (int depth = 0; ; depth++) {
+#ifdef DEBUG
         std::cerr << "!!! IDS depth = " << depth << std::endl;
+#endif
 
         // Time how long a depth of search d takes.
         clock_t const before_ms = timer.get_elapsed();
