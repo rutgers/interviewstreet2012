@@ -3,54 +3,22 @@
 #include <cstdlib>
 #include <vector>
 #include "input.hh"
-#include <sys/time.h>
-
-/* Subtract the `struct timeval' values X and Y,
-   storing the result in RESULT.
-   Return 1 if the difference is negative, otherwise 0.  */
-
-int timeval_subtract (struct timeval *result, struct timeval *x, struct timeval *y)
-{
-    /* Perform the carry for the later subtraction by updating y. */
-    if (x->tv_usec < y->tv_usec) {
-        int nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
-        y->tv_usec -= 1000000 * nsec;
-        y->tv_sec += nsec;
-    }
-    if (x->tv_usec - y->tv_usec > 1000000) {
-        int nsec = (x->tv_usec - y->tv_usec) / 1000000;
-        y->tv_usec += 1000000 * nsec;
-        y->tv_sec -= nsec;
-    }
-
-    /* Compute the time remaining to wait.
-       tv_usec is certainly positive. */
-    result->tv_sec = x->tv_sec - y->tv_sec;
-    result->tv_usec = x->tv_usec - y->tv_usec;
-
-    /* Return 1 if result is negative. */
-    return x->tv_sec < y->tv_sec;
-}
+#include <time.h>
 
 class DeltaTime {
     private:
-        struct timeval tv_;
 
     public:
-        DeltaTime() {
-            gettimeofday(&tv_, NULL);
+        DeltaTime()
+        {
         }
 
-        long get_elapsed() {
-            struct timeval tv, diff;
-            gettimeofday(&tv, NULL);
+        /* milliseconds */
+        clock_t get_elapsed() {
+            clock_t c = clock() / (CLOCKS_PER_SEC / 1000);
 
-            timeval_subtract(&diff, &tv, &tv_);
-
-            if (diff.tv_usec)
-                return diff.tv_sec * 1000 + diff.tv_usec / 1000;
-            else
-                return diff.tv_sec * 1000;
+            std::cout << c << std::endl;
+            return c;
         }
 };
 
@@ -534,14 +502,14 @@ Move play(Board &board, int player, long timeout_ms)
         //std::cerr << "depth = " << depth << std::endl;
 
         // Time how long a depth of search d takes.
-        long const before_ms = timer.get_elapsed();
+        clock_t const before_ms = timer.get_elapsed();
         Move move = search(board, player, player, depth, alpha, beta).first;
-        long const after_ms = timer.get_elapsed();
+        clock_t const after_ms = timer.get_elapsed();
 
         // Estimate how long a search of depth (d + 1) will take using the
         // branching factor.
-        long const curr_ms = after_ms - before_ms;
-        long const next_ms = curr_ms * (branching_factor - depth);
+        clock_t const curr_ms = after_ms - before_ms;
+        clock_t const next_ms = curr_ms * (branching_factor - depth);
         if (timer.get_elapsed() + next_ms >= timeout_ms) {
             return move;
         }
