@@ -383,6 +383,7 @@ bool Board::closes_box(Move move)
     return false;
 }
 
+#if 0
 static int eval(Board currBoard, int player)
 {
     /* Find largest chain */
@@ -416,16 +417,22 @@ static int eval(Board currBoard, int player)
     
     return max + 1;  /* At least one move closes a box */
 }
+#endif
 
 static int eval2(Board &move, int player)
+{
+    return 0;
+}
+
+static int eval(Board &move, int player)
 {
     std::vector<Edge> edge;
     edge.reserve(4);
 
     int b3 = 0;
 
-    for (int c = 0; c < move.bw_; c++) {
-        for (int r = 0; r < move.bh_; r++) {
+    for (int c = 1; c < move.bw_; c+= 2) {
+        for (int r = 1; r < move.bh_; r+= 2) {
             std::insert_iterator<std::vector<Edge> > edge_it = std::inserter(edge, edge.end());
             move.get_edges_in_box(r, c, edge_it);
 
@@ -505,8 +512,12 @@ static std::pair<Move, int> search(Board &board, int us, int player, int depth, 
         }
 
         // Randomly select one of the equally optimal moves.
-        int const i = rand() % optimal_moves.size();
-        return std::make_pair(optimal_moves[i], optimal_score);
+        if (optimal_moves.empty()) {
+            return std::make_pair(Move::invalid(), optimal_score);
+        } else {
+            int const i = rand() % optimal_moves.size();
+            return std::make_pair(optimal_moves[i], optimal_score);
+        }
     }
 }
 
@@ -519,7 +530,7 @@ Move play(Board &board, int player, long timeout_ms)
     int const branching_factor = 36;
 
     for (int depth = 0; ; depth++) {
-        std::cerr << "depth = " << depth << std::endl;
+        //std::cerr << "depth = " << depth << std::endl;
 
         // Time how long a depth of search d takes.
         long const before_ms = timer.get_elapsed();
@@ -530,8 +541,6 @@ Move play(Board &board, int player, long timeout_ms)
         // branching factor.
         long const curr_ms = after_ms - before_ms;
         long const next_ms = curr_ms * (branching_factor - depth);
-        std::cout << "curr (ms) = " << curr_ms << std::endl;
-        std::cout << "next (ms) = " << next_ms << std::endl;
         if (timer.get_elapsed() + next_ms >= timeout_ms) {
             return move;
         }
