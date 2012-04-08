@@ -469,20 +469,26 @@ static std::pair<Move, int> search(Board &board, int us, int player, int depth, 
             Move &move = moves[i];
 
             int score_move = move.apply();
-            int next_player;
             int score;
 
             // If we didn't score a point, then proceed as usual (i.e. as a a
             // minimax min node).
             if (score_move == 0) {
-                next_player = player ^ 3;
+                int next_player = player ^ 3;
                 score = score_move - search(board, us, next_player, depth - 1, alpha, beta).second;
             }
             // If we scored a point, it's still our turn...so keep going.
             else {
-                next_player = player;
-                score = score_move + search(board, us, next_player, depth - 1, alpha, beta).second;
+                score = score_move + search(board, us, player, depth - 1, alpha, beta).second;
             }
+
+#if 0
+            std::cout << "player " << player << " at depth " << depth << std::endl;
+            std::cout << ">>> score = " << score_move << " + " << (score - score_move) << std::endl;
+            board.print();
+            std::cout << std::endl << std::endl;
+#endif
+
             move.unapply();
 
             // Keep track of a set of equally optimal values.
