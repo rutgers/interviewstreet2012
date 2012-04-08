@@ -18,31 +18,33 @@ std::string exec(char* cmd) {
     return result;
 }
 
-void insertEdge(int r, int c, int player, int raw_[11][11])
+void insertEdge(int r, int c, int player, int raw_[11][11], int &yes)
 {
     int bw_, bh_ = bw_ = 11;
     int rOdd = r & 1;
     int cOdd = c & 1;
+    yes = 1;
     /* Vertical Slice */
     raw_[r][c] = player;
     if (rOdd && !cOdd)
     {
         if (c == 0)
         {
-            if (raw_[r][c+2] && raw_[r-1][c+1] && raw_[r+1][c+1])
-                raw_[r][c+1] = player;
+            if (raw_[r][c+2] && raw_[r-1][c+1] && raw_[r+1][c+1]) {
+                raw_[r][c+1] = player; yes = 0; }
         }
         else if (c == bw_)
         {
-            if (raw_[r][c-2] && raw_[r-1][c-1] && raw_[r+1][c-1])
-                raw_[r][c-1] = player;
+            if (raw_[r][c-2] && raw_[r-1][c-1] && raw_[r+1][c-1]) {
+                raw_[r][c-1] = player; yes = 0; }
+                
         }
         else
         {
-            if (raw_[r][c+2] && raw_[r-1][c+1] && raw_[r+1][c+1])
-                raw_[r][c+1] = player;
-            if (raw_[r][c-2] && raw_[r-1][c-1] && raw_[r+1][c-1])
-                raw_[r][c-1] = player;
+            if (raw_[r][c+2] && raw_[r-1][c+1] && raw_[r+1][c+1]) {
+                raw_[r][c+1] = player; yes = 0; }
+            if (raw_[r][c-2] && raw_[r-1][c-1] && raw_[r+1][c-1]) {
+                raw_[r][c-1] = player; yes = 0; }
         }
     }
     /* Horizontal Slice */
@@ -50,20 +52,20 @@ void insertEdge(int r, int c, int player, int raw_[11][11])
     {
         if (r == 0)
         {
-            if (raw_[r+2][c] && raw_[r+1][c-1] && raw_[r+1][c+1])
-                raw_[r+1][c] = player;
+            if (raw_[r+2][c] && raw_[r+1][c-1] && raw_[r+1][c+1]) {
+                raw_[r+1][c] = player; yes = 0; }
         }
         else if (r == bh_)
         {
-            if (raw_[r-2][c] && raw_[r-1][c-1] && raw_[r-1][c+1])
-                raw_[r-1][c] = player;
+            if (raw_[r-2][c] && raw_[r-1][c-1] && raw_[r-1][c+1]) {
+                raw_[r-1][c] = player; yes = 0; }
         }
         else
         {
-            if (raw_[r+2][c] && raw_[r+1][c-1] && raw_[r+1][c+1])
-                raw_[r+1][c] = player;
-            if (raw_[r-2][c] && raw_[r-1][c-1] && raw_[r-1][c+1])
-                raw_[r-1][c] = player;
+            if (raw_[r+2][c] && raw_[r+1][c-1] && raw_[r+1][c+1]) {
+                raw_[r+1][c] = player; yes = 0; }
+            if (raw_[r-2][c] && raw_[r-1][c-1] && raw_[r-1][c+1]) {
+                raw_[r-1][c] = player; yes = 0; }
         }
     }
 }
@@ -75,6 +77,7 @@ int main () {
     char buf[32];
     int check;
     int i,o;
+    int gotshit;
     FILE *fp = fopen("in1.txt","r");
     fscanf(fp,"%d",&player);
     for (i = 0; i < 11; ++i)
@@ -92,7 +95,7 @@ int main () {
     fclose(fp);
     for (;;) {
         cout << tmp;
-        insertEdge(r,c,player,array);
+        insertEdge(r,c,player,array,gotshit);
         //array[r][c] = player;
         printf("%d\n",player);
         for (i = 0; i < 11; ++i) {
@@ -100,7 +103,7 @@ int main () {
                 printf("%d ", array[i][o]);
             puts("");
         }
-        player ^= 3;
+        player ^= 3*gotshit;
         fp = fopen("inNEW.txt","w");
         fprintf(fp, "%d\n",player);
         for (i = 0; i < 11; ++i)
