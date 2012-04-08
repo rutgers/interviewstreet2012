@@ -414,7 +414,7 @@ static int eval(Board &move, int player)
             edge.clear();
         }
     }
-    return b3;
+    return b3 > 0;
 }
 
 static std::pair<Move, int> search(Board &board, int us, int player, int depth, int alpha, int beta)
