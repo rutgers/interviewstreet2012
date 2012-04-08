@@ -76,12 +76,18 @@ public:
     bool has_edge(Edge &e);
 
     template <typename T>
+    void get_edges_in_box(int r, int c, std::insert_iterator<T> &edges)
+    {
+        *edges = Edge(this, r + 1, c);
+        *edges = Edge(this, r - 1, c);
+        *edges = Edge(this, r,     c + 1);
+        *edges = Edge(this, r,     c - 1);
+    }
+
+    template <typename T>
     void get_edges_in_box(Box &b, std::insert_iterator<T> &edges)
     {
-        *edges = Edge(this, b.r + 1, b.c);
-        *edges = Edge(this, b.r - 1, b.c);
-        *edges = Edge(this, b.r,     b.c + 1);
-        *edges = Edge(this, b.r,     b.c - 1);
+        get_edges_in_box(b.r, b.c, edges);
     }
 
     template <typename T>
@@ -104,12 +110,11 @@ public:
         }
     }
 
-private:
     static int const bw_ = 11;
     static int const bh_ = 11;
+private:
     int raw_[bh_][bw_];
 };
-
 
 class Game {
 public:
