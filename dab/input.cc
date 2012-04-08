@@ -437,8 +437,14 @@ static std::pair<Move, int> search(Board &board, int us, int player, int depth, 
             int score_move = move.apply();
             int score;
 
+            std::cerr << std::endl << "player " << player << " at depth " << depth
+                      << " [ move_score = " << score_move << " ]" << std::endl;
+            board.print();
+            std::cerr << std::endl << std::endl;
+
             // If we didn't score a point, then proceed as usual (i.e. as a a
             // minimax min node).
+            std::cerr << ">>>RECURSIVE START" << std::endl;
             if (score_move == 0) {
                 int next_player = player ^ 3;
                 score = score_move - search(board, us, next_player, depth - 1, alpha, beta).second;
@@ -447,13 +453,7 @@ static std::pair<Move, int> search(Board &board, int us, int player, int depth, 
             else {
                 score = score_move + search(board, us, player, depth - 1, alpha, beta).second;
             }
-
-#if 0
-            std::cout << "player " << player << " at depth " << depth << std::endl;
-            std::cout << ">>> score = " << score_move << " + " << (score - score_move) << std::endl;
-            board.print();
-            std::cout << std::endl << std::endl;
-#endif
+            std::cerr << "<<<RECURSIVE END [ move_score = " << score << " ]" << std::endl;
 
             move.unapply();
 
@@ -497,7 +497,7 @@ Move play(Board &board, int player, long timeout_ms)
     int const branching_factor = 36;
 
     for (int depth = 0; ; depth++) {
-        //std::cerr << "depth = " << depth << std::endl;
+        std::cerr << "!!! IDS depth = " << depth << std::endl;
 
         // Time how long a depth of search d takes.
         clock_t const before_ms = timer.get_elapsed();
