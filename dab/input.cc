@@ -417,7 +417,7 @@ static int eval(Board &move, int player)
             edge.clear();
         }
     }
-    return -b3;
+    return b3;
 }
 
 static std::pair<Move, int> search(Board &board, int us, int player, int depth, int alpha, int beta)
@@ -482,6 +482,7 @@ static std::pair<Move, int> search(Board &board, int us, int player, int depth, 
             }
 
             // Alpha-beta pruning
+#if 0
             if (player == us) {
                 alpha = std::max(alpha, optimal_score);
                 if (beta <= alpha) {
@@ -495,6 +496,7 @@ static std::pair<Move, int> search(Board &board, int us, int player, int depth, 
                     return std::make_pair(optimal_moves[0], beta);
                 }
             }
+#endif
         }
 
         // Randomly select one of the equally optimal moves.
