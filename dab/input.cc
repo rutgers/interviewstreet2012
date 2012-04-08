@@ -481,6 +481,7 @@ static std::pair<Move, int> search(Board &board, int us, int player, int depth, 
                 optimal_moves.push_back(move);
             }
 
+#if 0
             // Alpha-beta pruning
             if (player == us) {
                 alpha = std::max(alpha, optimal_score);
@@ -493,9 +494,7 @@ static std::pair<Move, int> search(Board &board, int us, int player, int depth, 
                     return std::make_pair(move, beta);
                 }
             }
-
-            if (beta <= alpha) {
-            }
+#endif
         }
 
         // Randomly select one of the equally optimal moves.
