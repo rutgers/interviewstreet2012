@@ -437,7 +437,7 @@ static std::pair<Move, int> search(Board &board, int us, int player, int depth, 
     // Recursive minimax search.
     else {
         std::vector<Move> optimal_moves;
-        int optimal_score = 0;
+        int optimal_score = std::numeric_limits<int>::min();
 
         for (size_t i = 0; i < moves.size(); i++) {
             Move &move = moves[i];
@@ -499,7 +499,14 @@ static std::pair<Move, int> search(Board &board, int us, int player, int depth, 
 
         // Randomly select one of the equally optimal moves.
         if (optimal_moves.empty()) {
-            return std::make_pair(Move::invalid(), optimal_score);
+            if (moves.empty()) {
+                return std::make_pair(Move::invalid(), optimal_score);
+            }
+            // This should never happen. Just in case...
+            else {
+                std::cerr << "WTF?" << std::endl;
+                return std::make_pair(moves[0], 0);
+            }
         } else {
             int const i = rand() % optimal_moves.size();
             return std::make_pair(optimal_moves[i], optimal_score);
