@@ -9,11 +9,12 @@ LDFLAGS  = $(CXXFLAGS)
 
 test_in : input.cc.o test_in.cc.o
 submit  : all.cc.o
-TARGETS=test_in submit
+print   : print.cc.o input.cc.o
+play    : play.cc.o  input.cc.o
+TARGETS=test_in submit print play
 
 .PHONY: all test clean
 .SECONDARY:
-
 
 all:: $(TARGETS)
 
