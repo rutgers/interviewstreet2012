@@ -306,10 +306,8 @@ Board &Game::get_board(void)
  * Play
  */
 
-bool Board::closes_box(Move move)
+bool Board::closes_box(int r, int c)
 {
-    int r = move.r();
-    int c = move.c();
     int rOdd = r & 1;
     int cOdd = c & 1;
     /* Vertical Slice */
@@ -327,9 +325,7 @@ bool Board::closes_box(Move move)
         }
         else
         {
-            if (raw_[r][c+2] && raw_[r-1][c+1] && raw_[r+1][c+1])
-                return true;
-            if (raw_[r][c-2] && raw_[r-1][c-1] && raw_[r+1][c-1])
+            if ((raw_[r][c+2] && raw_[r-1][c+1] && raw_[r+1][c+1]) || (raw_[r][c-2] && raw_[r-1][c-1] && raw_[r+1][c-1]))
                 return true;
         }
     }
@@ -348,18 +344,17 @@ bool Board::closes_box(Move move)
         }
         else
         {
-            if (raw_[r+2][c] && raw_[r+1][c-1] && raw_[r+1][c+1])
-                return true;
-            if (raw_[r-2][c] && raw_[r-1][c-1] && raw_[r-1][c+1])
+            if ((raw_[r+2][c] && raw_[r+1][c-1] && raw_[r+1][c+1]) || (raw_[r-2][c] && raw_[r-1][c-1] && raw_[r-1][c+1]))
                 return true;
         }
     }
     return false;
 }
 
-#if 0
-static int eval(Board currBoard, int player)
+static int eval2(Board &currBoard, int &player, int depth)
 {
+    if (depth > 6)
+        return 0;
     /* Find largest chain */
     std::vector<Move> moves;
     std::insert_iterator<std::vector<Move> > currmoves = std::inserter(moves, moves.end());
@@ -372,7 +367,7 @@ static int eval(Board currBoard, int player)
     /* Remove if this move doesn't close a box */
     for (int i = 0, len = moves.size(); i < len; ++i)
     {
-        if (currBoard.closes_box(moves[i])) {
+        if (currBoard.closes_box(moves[i].r(),moves[i].c())) {
             movesUsable.push_back(moves[i]);
         }
     }
@@ -383,7 +378,7 @@ static int eval(Board currBoard, int player)
     int max = 0, tmp;
     for (int i = 0, len = movesUsable.size(); i < len; ++i) {
         currBoard.make_move(player, movesUsable[i].r(), movesUsable[i].c());
-        tmp = eval(currBoard, player);
+        tmp = eval2(currBoard, player, depth + 1);
         if (tmp > max)
             max = tmp;
         currBoard.pull_up_edge(movesUsable[i].r(), movesUsable[i].c());
@@ -391,7 +386,6 @@ static int eval(Board currBoard, int player)
     
     return max + 1;  /* At least one move closes a box */
 }
-#endif
 
 static int eval(Board &move, int player)
 {
@@ -431,7 +425,7 @@ static std::pair<Move, int> search(Board &board, int us, int player, int depth, 
     }
     // We've bottomed out in the search, so use the evaluation function.
     else if (depth <= 0) {
-        int const value = eval(board, player);
+        int const value = eval2(board, player);
         return std::make_pair(Move::invalid(), value);
     }
     // Recursive minimax search.
