@@ -336,32 +336,65 @@ bool Board::closes_box(Move move)
 {
     int r = move.r();
     int c = move.c();
-    int nb(0), sb(0), eb(0), wb(0);
-
-    if (c > 1 && r > 0) /* move can close left box */ 
-        wb = raw_[r][c-2] + raw_[r+1][c+1] + raw_[r+1][c-1];
-    if (c < bw_ && r > 0) /* move can close right box */
-        eb = raw_[r][c+2] + raw_[r+1][c+1] + raw_[r+1][c-1];
-    if (r > 1 && c < bw_) /* move can close upper box */
-        nb = raw_[r+2][c] + raw_[r+1][c+1] + raw_[r+1][c-1];
-    if (r < (bh_-1) && c < bw_) /* move can close lower box */
-        sb = raw_[r-2][c] + raw_[r-1][c+1] + raw_[r-1][c-1];
-
-    return ((nb > 3 || sb > 3 || wb > 3 || eb > 3)? true : false);
+    int rOdd = r & 1;
+    int cOdd = c & 1;
+    /* Vertical Slice */
+    if (rOdd && !cOdd)
+    {
+        if (c == 0)
+        {
+            if (raw_[r][c+2] && raw_[r-1][c+1] && raw_[r+1][c+1])
+                return true;
+        }
+        else if (c == bw_)
+        {
+            if (raw_[r][c-2] && raw_[r-1][c-1] && raw_[r+1][c-1])
+                return true;
+        }
+        else
+        {
+            if (raw_[r][c+2] && raw_[r-1][c+1] && raw_[r+1][c+1])
+                return true;
+            if (raw_[r][c-2] && raw_[r-1][c-1] && raw_[r+1][c-1])
+                return true;
+        }
+    }
+    /* Horizontal Slice */
+    else if (!rOdd && cOdd)
+    {
+        if (r == 0)
+        {
+            if (raw_[r+2][c] && raw_[r+1][c-1] && raw_[r+1][c+1])
+                return true;
+        }
+        else if (r == bh_)
+        {
+            if (raw_[r-2][c] && raw_[r-1][c-1] && raw_[r-1][c+1])
+                return true;
+        }
+        else
+        {
+            if (raw_[r+2][c] && raw_[r+1][c-1] && raw_[r+1][c+1])
+                return true;
+            if (raw_[r-2][c] && raw_[r-1][c-1] && raw_[r-1][c+1])
+                return true;
+        }
+    }
+    return false;
 }
 
 #if 0
 static int eval(Board currBoard, int player)
 {
-    // FIXME: Use a real evaluation function...
     /* Find largest chain */
     std::vector<Move> moves;
     std::insert_iterator<std::vector<Move> > currmoves = std::inserter(moves, moves.end());
     /* Find moves */
     currBoard.get_valid_moves(player, currmoves);
-    //std::vector<Move>::iterator it;
+    
     std::vector<Move> movesUsable;
     movesUsable.reserve(moves.size());
+    
     /* Remove if this move doesn't close a box */
     for (int i = 0, len = moves.size(); i < len; ++i)
     {
@@ -370,12 +403,6 @@ static int eval(Board currBoard, int player)
         }
     }
     
-    /*for (it = moves.begin(); it < moves.end(); it++)
-    {
-        if (!currBoard.closes_box(*it)) {
-            moves.erase(it);
-        }
-    }*/
     if (movesUsable.size() == 0)
         return 0;
     /* only moves that close boxes are left */
@@ -387,14 +414,6 @@ static int eval(Board currBoard, int player)
             max = tmp;
         currBoard.pull_up_edge(movesUsable[i].r(), movesUsable[i].c());
     }
-    /*for (it = moves.begin(); it < moves.end(); it++)
-    {
-        currBoard.make_move(player, it->r(), it->c());
-        tmp = eval(currBoard, player);
-        if (tmp > max)
-            max = tmp;
-        currBoard.pull_up_edge(it->r(), it->c());
-    }*/
     
     return max + 1;  /* At least one move closes a box */
 }
