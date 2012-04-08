@@ -481,6 +481,7 @@ static std::pair<Move, int> search(Board &board, int us, int player, int depth, 
                 optimal_moves.push_back(move);
             }
 
+#if 0
             // Alpha-beta pruning
             if (player == us) {
                 alpha = std::max(alpha, optimal_score);
@@ -493,6 +494,7 @@ static std::pair<Move, int> search(Board &board, int us, int player, int depth, 
                     return std::make_pair(optimal_moves[0], beta);
                 }
             }
+#endif
         }
 
         // Randomly select one of the equally optimal moves.
@@ -539,7 +541,7 @@ Move play(Board &board, int player, long timeout_ms)
         // Estimate how long a search of depth (d + 1) will take using the
         // branching factor.
         clock_t const curr_ms = after_ms - before_ms;
-        clock_t const next_ms = curr_ms * (branching_factor - depth);
+        clock_t const next_ms = curr_ms * branching_factor;
         if (timer.get_elapsed() + next_ms >= timeout_ms) {
             return move;
         }
