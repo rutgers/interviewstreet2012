@@ -16,8 +16,6 @@ class DeltaTime {
         /* milliseconds */
         clock_t get_elapsed() {
             clock_t c = clock() / (CLOCKS_PER_SEC / 1000);
-
-            std::cout << c << std::endl;
             return c;
         }
 };
