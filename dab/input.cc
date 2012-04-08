@@ -402,11 +402,6 @@ static int eval(Board currBoard, int player)
 
 static int eval(Board &move, int player)
 {
-    return 0;
-}
-
-static int eval2(Board &move, int player)
-{
     std::vector<Edge> edge;
     edge.reserve(4);
 
