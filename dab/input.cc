@@ -411,7 +411,7 @@ static int eval(Board &move, int player)
             edge.clear();
         }
     }
-    return -b3;
+    return b3;
 }
 
 static std::pair<Move, int> search(Board &board, int us, int player, int depth, int alpha, int beta)
@@ -475,16 +475,18 @@ static std::pair<Move, int> search(Board &board, int us, int player, int depth, 
                 optimal_moves.push_back(move);
             }
 
-#if 0
             // Alpha-beta pruning
+#if 0
             if (player == us) {
                 alpha = std::max(alpha, optimal_score);
                 if (beta <= alpha) {
+                    std::cerr << "???PRUNED alpha" << std::endl;
                     return std::make_pair(optimal_moves[0], alpha);
                 }
             } else {
                 beta = std::min(beta, optimal_score);
                 if (beta <= alpha) {
+                    std::cerr << "???PRUNED beta" << std::endl;
                     return std::make_pair(optimal_moves[0], beta);
                 }
             }
