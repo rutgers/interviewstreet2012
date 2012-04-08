@@ -6,7 +6,9 @@
 
 int main(void)
 {
-    srand(time(NULL));
+    time_t s = time(NULL);
+    std::cout << s << std::endl;
+    srand(s);
 
     Game forReals;
     forReals.read_input();

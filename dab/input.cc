@@ -80,7 +80,15 @@ void Board::print(void)
 {
     std::ostream &o = std::cerr;
 
+
+    o << "-\t";
+    for (int c = 0; c < bw_; c++)
+        o << c;
+    o << std::endl;
+
     for (int r = 0; r < bh_; r++) {
+        o << r << '\t';
+
         for (int c = 0; c < bw_; c++) {
             bool col_odd = c%2;
             bool row_odd = r%2;
@@ -414,7 +422,7 @@ static int eval(Board &move, int player)
             edge.clear();
         }
     }
-    return b3 > 0;
+    return -b3;
 }
 
 static std::pair<Move, int> search(Board &board, int us, int player, int depth, int alpha, int beta)
