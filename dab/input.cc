@@ -407,8 +407,8 @@ static int eval(Board &move, int player)
 
     int b3 = 0;
 
-    for (int c = 0; c < move.bw_; c++) {
-        for (int r = 0; r < move.bh_; r++) {
+    for (int c = 1; c < move.bw_; c+= 2) {
+        for (int r = 1; r < move.bh_; r+= 2) {
             std::insert_iterator<std::vector<Edge> > edge_it = std::inserter(edge, edge.end());
             move.get_edges_in_box(r, c, edge_it);
 
